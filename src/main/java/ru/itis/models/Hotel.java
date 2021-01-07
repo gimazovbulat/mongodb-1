@@ -16,11 +16,9 @@ public class Hotel {
     @Id
     private String _id;
     private String name;
-    private int stars;
+    private Integer stars;
     @Field("big")
-    private boolean isBig;
+    private Boolean isBig;
     @DBRef
     private List<Resident> residents;
-    @DBRef
-    private List<String> vips;
 }

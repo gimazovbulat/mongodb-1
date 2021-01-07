@@ -14,8 +14,8 @@ public class ResidentRepresentationProcessor implements RepresentationModelProce
     @Override
     public EntityModel<Resident> process(EntityModel<Resident> model) {
         Resident resident = model.getContent();
-        if (resident.isVip()) {
-            model.add(linkTo(methodOn(TrashController.class).vip(resident.get_id())).withRel("vip"));
+        if (resident.getIsVip()) {
+            model.add(linkTo(methodOn(TrashController.class).bookWholeFloor(resident)).withRel("bookWholeFloor"));
         }
         return model;
     }

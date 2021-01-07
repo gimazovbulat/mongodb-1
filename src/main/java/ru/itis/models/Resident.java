@@ -13,6 +13,19 @@ public class Resident {
     private String _id;
     private String name;
     private String age;
-    private boolean isLoggedIn;
-    private boolean isVip;
+    private Boolean wholeFloor;
+    private Boolean isVip;
+
+    public Resident bookWholeFloor(){
+        if (wholeFloor == null){
+            setWholeFloor(true);
+            return this;
+        }
+        if (wholeFloor) {
+            setWholeFloor(false);
+        } else {
+            setWholeFloor(true);
+        }
+        return this;
+    }
 }

@@ -1,11 +1,9 @@
 package ru.itis.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.itis.models.Hotel;
+import ru.itis.models.Resident;
 import ru.itis.repositories.HotelRepository;
 import ru.itis.services.HotelService;
 
@@ -24,8 +22,20 @@ public class TrashController {
     }
 
     @PostMapping("/hotels/vip")
-    public List<String> vip(String residentId) {
-        Hotel hotel = hotelService.vip(residentId);
-        return hotel.getVips();
+    public Hotel vip(@RequestParam String residentId) {
+        return hotelService.vip(residentId);
+    }
+
+    @GetMapping("/hotels/vips")
+    public List<Resident> findAllVips(
+            @RequestParam("big") Boolean big,
+            @RequestParam("stars") Integer stars
+    ) {
+        return hotelService.findAllVips(stars, big);
+    }
+
+    @PostMapping("/residents/wholeFloor")
+    public Resident bookWholeFloor(@RequestBody Resident resident) {
+        return hotelService.bookWholeFloor(resident);
     }
 }

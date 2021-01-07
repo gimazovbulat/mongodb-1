@@ -34,12 +34,12 @@ public class HotelServiceImpl implements HotelService {
         Hotel hotel = hotelRepository.findByResidents(Collections.singletonList(resident))
                 .orElseThrow(() -> new IllegalStateException("hotel doesn't exist"));
 
-        hotel.getVips().add(resident.getName());
+        resident.setIsVip(true);
         return hotel;
     }
 
     @Override
-    public List<Hotel> findAllVips(String name, int stars, boolean big) {
+    public List<Resident> findAllVips(int stars, boolean big) {
         Document searchQuery = new Document();
 
         MongoClient client = MongoClients.create();
@@ -47,7 +47,7 @@ public class HotelServiceImpl implements HotelService {
         MongoCollection<Document> collection = database.getCollection("hotels");
 
         searchQuery
-                .append("isBig", true)
+                .append("isBig", big)
                 .append("$or", Arrays.asList(
                         new Document("stars", new Document("$gt", stars)),
                         new Document("big", big)));
@@ -56,7 +56,7 @@ public class HotelServiceImpl implements HotelService {
                 .projection(fields(include("name", "stars", "isBig"), excludeId()));
 
         List<Hotel> hotels = new ArrayList<>();
-        for (Document doc : resultDocuments){
+        for (Document doc : resultDocuments) {
             try {
                 Hotel hotel = objectMapper.readValue(doc.toJson(), Hotel.class);
                 hotels.add(hotel);
@@ -64,6 +64,23 @@ public class HotelServiceImpl implements HotelService {
                 throw new IllegalStateException(e);
             }
         }
-        return hotels;
+
+        List<Resident> vips = new ArrayList<>();
+        hotels.forEach(hotel -> {
+            for (Resident res : hotel.getResidents()) {
+                if (res.getIsVip()){
+                    vips.add(res);
+                }
+            }
+        });
+        return vips;
+    }
+
+    @Transactional
+    @Override
+    public Resident bookWholeFloor(Resident resident) {
+        resident.bookWholeFloor();
+
+        return residentRepository.save(resident);
     }
 }
